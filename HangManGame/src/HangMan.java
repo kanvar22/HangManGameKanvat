@@ -1,5 +1,6 @@
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 import java.util.Stack;
 
 import javax.swing.JFrame;
@@ -10,26 +11,54 @@ import javax.swing.JPanel;
 public class HangMan implements KeyListener{
 	String wordToGuess;
 	Stack<String> randomWord = new Stack<String>();
+	ArrayList<JLabel> boxes = new ArrayList<JLabel>();
 	JFrame frame = new JFrame();
 	JPanel panel = new JPanel();
 	JLabel label = new JLabel();
+	JLabel label3 = new JLabel();
+	JLabel lives = new JLabel();
+	int numberOfLives = 9  ;
 	
 	
 public static void main(String[] args) {
 	JOptionPane.showMessageDialog(null, "This is a Java Hang Man.");
-HangMan HHangman = new HangMan();	
-HHangman.hangManChosing();
+HangMan HHangman = new HangMan();
+
+
 }
 //Making the frame and printing the 
  HangMan() {
 	frame.add(panel);
 	panel.add(label);
+	panel.add(lives);
+	lives.setText("" + numberOfLives);
+	hangManChosing();
 	wordToGuess = " ";
 	label.setText(""+ wordToGuess);
-	frame.setSize(300, 300);
+	frame.setSize(1000, 100);
 	frame.addKeyListener(this);
 	frame.setVisible(true);
+	
+	wordToGuess = randomWord.peek();
+	for (int i = 0; i < wordToGuess.length(); i++) {
+		JLabel label3 = new JLabel(); 
+		label3.setText(" _ ");
+		panel.add(label3);
+		boxes.add(label3);
+		
+		
+	}
+	System.out.println(wordToGuess);
+	frame.pack();
 }
+ private String getCurrentAnswer() {
+		StringBuffer answer = new StringBuffer();
+		for (JLabel textBox : boxes) {
+			answer.append(textBox.getText());
+		}
+		return answer.toString();
+	}
+
 //Making random variable
 public void hangManChosing() {
 	randomWord.push("main method");
@@ -45,7 +74,17 @@ public void hangManChosing() {
 	randomWord.push("eclipse");
 	randomWord.push("stack");
 	randomWord.push("array lists");
+	
 }
+private void updateSpacesWithUserInput(char keyChar) {
+	for (int i = 0; i < wordToGuess.length(); i++) {
+		if (wordToGuess.charAt(i) == keyChar) {
+			boxes.get(i).setText("" + keyChar);
+		}
+	}
+}
+
+
 @Override
 public void keyTyped(KeyEvent e) {
 	// TODO Auto-generated method stub
@@ -56,11 +95,26 @@ public void keyTyped(KeyEvent e) {
 public void keyPressed(KeyEvent e) {
 	String letterAmount = "";
 	// TODO Auto-generated method stub
-	wordToGuess = randomWord.pop();
-	for (int i = 0; i < wordToGuess.length(); i++) {
-		letterAmount += "_";
+	
+
+	//label.setText(""+ letterAmount);
+	if (wordToGuess.indexOf(e.getKeyChar()) >= 0) {
+		System.out.println("yay");
+		letterAmount += "";
+		updateSpacesWithUserInput(e.getKeyChar());
 	}
-	label.setText(""+ letterAmount);
+	else {
+		numberOfLives = numberOfLives - 1;
+		lives.setText("" + numberOfLives);
+	}
+	if (numberOfLives == 0) {
+		JOptionPane.showMessageDialog(null, "Better luck next time!!!!!");
+	}
+	String correctAnswer = getCurrentAnswer();
+	if (correctAnswer.equals(wordToGuess)) {
+		JOptionPane.showMessageDialog(null, "You got it correct");
+	}
+
 }
 @Override
 public void keyReleased(KeyEvent e) {
