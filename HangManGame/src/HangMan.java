@@ -22,6 +22,7 @@ public class HangMan implements KeyListener{
 	
 public static void main(String[] args) {
 	JOptionPane.showMessageDialog(null, "This is a Java Hang Man.");
+	JOptionPane.showMessageDialog(null, "If you are done with the word early then click enter until you go to the next word!!");
 HangMan HHangman = new HangMan();
 
 
@@ -39,17 +40,11 @@ HangMan HHangman = new HangMan();
 	frame.addKeyListener(this);
 	frame.setVisible(true);
 	
-	wordToGuess = randomWord.peek();
-	for (int i = 0; i < wordToGuess.length(); i++) {
-		JLabel label3 = new JLabel(); 
-		label3.setText(" _ ");
-		panel.add(label3);
-		boxes.add(label3);
-		
-		
-	}
+	wordToGuess = randomWord.pop();
+	createBoxes();
 	System.out.println(wordToGuess);
 	frame.pack();
+	
 }
  private String getCurrentAnswer() {
 		StringBuffer answer = new StringBuffer();
@@ -83,6 +78,42 @@ private void updateSpacesWithUserInput(char keyChar) {
 		}
 	}
 }
+private void loadNextPuzzle() {
+	removeBoxes();
+	
+	wordToGuess = randomWord.pop();
+	System.out.println("puzzle is now " + wordToGuess);
+	createBoxes();
+	JOptionPane.showMessageDialog(null, "Press enter to resent your lives.");
+	frame.pack();
+	
+	
+	
+}
+public void createBoxes() {
+	for (int i = 0; i < wordToGuess.length(); i++) {
+		JLabel label3 = new JLabel(); 
+		label3.setText(" _ ");
+		panel.add(label3);
+		boxes.add(label3);
+		
+		
+	}
+}
+public void removeBoxes( ){
+	for (int i = 0; i < wordToGuess.length(); i++) {
+		
+		label3 = boxes.remove(0);
+		panel.remove(label3);
+		
+	}
+	
+	
+		
+		
+	
+}
+
 
 
 @Override
@@ -106,13 +137,22 @@ public void keyPressed(KeyEvent e) {
 	else {
 		numberOfLives = numberOfLives - 1;
 		lives.setText("" + numberOfLives);
+		
 	}
+	
 	if (numberOfLives == 0) {
 		JOptionPane.showMessageDialog(null, "Better luck next time!!!!!");
+		System.exit(0);
 	}
+	
 	String correctAnswer = getCurrentAnswer();
 	if (correctAnswer.equals(wordToGuess)) {
 		JOptionPane.showMessageDialog(null, "You got it correct");
+		
+			
+			loadNextPuzzle();
+			numberOfLives = 9 + 1;
+		
 	}
 
 }
